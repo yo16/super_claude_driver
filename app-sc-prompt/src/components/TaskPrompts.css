@@ -1,0 +1,7 @@
+.taskPromptsInputDiv > label {
+    display: inline-block;
+    width: 120px;
+}
+.taskPromptsInputDiv > input {
+    width: 250px;
+}
