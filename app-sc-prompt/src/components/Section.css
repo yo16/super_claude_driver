@@ -5,6 +5,11 @@
     padding: 10px;
     margin: 10px;
 }
+.sectionDiv:focus-within {
+    border-width: 5px;
+    border-color: #99c;
+    background-color: #ccf;
+}
 .sectionTextareaDivContent {
     display: flex;
     flex-direction: row;
