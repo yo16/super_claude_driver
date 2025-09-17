@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 
+import { TicketTableSet } from './TicketTableSet';
 import { Section } from './Section';
 
 import './TaskPrompts.css';
@@ -28,32 +29,51 @@ export default function TaskPrompts() {
             (input as HTMLInputElement).select();
         }
     }
-    const addFinishedTicketNo = (ticketNo: string) => {
-        setFinishedTicketNoList([...finishedTicketNoList, ticketNo]);
+
+    // 終了チケットが変更された時のハンドラー
+    const handleOnChangeFinishedTicketNoList = (finishedTicketNoList: string[]) => {
+        setFinishedTicketNoList([...finishedTicketNoList]);
+    }
+
+    // TicketTableSetで、チケットが選択された時、ticketNoとticketFilePathを更新する
+    const handleOnSelectTicket = (ticketNo: string, ticketFilePath: string) => {
+        setTicketNo(ticketNo);
+        setTicketFilePath(ticketFilePath);
     }
 
     return (
         <>
             <div>
-                <div>
-                    <div className="taskPromptsInputDiv">
-                        <label>ticketNo: </label>
-                        <input
-                            id="ticketNo"
-                            type="text"
-                            value={ticketNo}
-                            onChange={(e) => setTicketNo(e.target.value)}
-                            onClick={handleOnClickTicketNo}
-                        />
+                <div
+                    className="taskPromptsHeaderContents"
+                >
+                    <div>
+                        <div className="taskPromptsInputDiv">
+                            <label>ticketNo: </label>
+                            <input
+                                id="ticketNo"
+                                type="text"
+                                value={ticketNo}
+                                onChange={(e) => setTicketNo(e.target.value)}
+                                onClick={handleOnClickTicketNo}
+                            />
+                        </div>
+                        <div className="taskPromptsInputDiv">
+                            <label>ticketFilePath: </label>
+                            <input
+                                id="ticketFilePath"
+                                type="text"
+                                value={ticketFilePath}
+                                onChange={(e) => setTicketFilePath(e.target.value)}
+                                onClick={handleOnClickTicketFilePath}
+                            />
+                        </div>
                     </div>
-                    <div className="taskPromptsInputDiv">
-                        <label>ticketFilePath: </label>
-                        <input
-                            id="ticketFilePath"
-                            type="text"
-                            value={ticketFilePath}
-                            onChange={(e) => setTicketFilePath(e.target.value)}
-                            onClick={handleOnClickTicketFilePath}
+                    {/* チケットリスト */}
+                    <div>
+                        <TicketTableSet
+                            onSelectTicket={handleOnSelectTicket}
+                            onChangedFinishedTicketNoList={handleOnChangeFinishedTicketNoList}
                         />
                     </div>
                 </div>
@@ -66,15 +86,30 @@ export default function TaskPrompts() {
                 />
 
                 <Section
+                    title="チケット整列"
+                    defaultPrompt={
+                        "`docs/tickets`以下にチケットファイルがある。" +
+                        "依頼事項: これらを、[チケットリスト](docs/tickets/TICKETS_LIST.md)の実装順序に従って、整列して。" +
+                        "出力形式は、`チケット番号,チケットファイルパス`。\n" +
+                        "例\n" +
+                        "T001,docs/tickets/T001_initialize.md\n" +
+                        "T002,docs/tickets/T002_initialize.md\n" +
+                        "T003,docs/tickets/T003_initialize.md"
+                    }
+                    ticketNo={ticketNo}
+                    ticketFilePath={ticketFilePath}
+                />
+
+                <Section
                     title="タスクを確認する"
                     defaultPrompt={
                         "/sc:analyze " +
-                        "\"`CLAUDE.md`、`docs/specifications/*.md` をもとにシステムを構築している。" +
+                        "\"`CLAUDE.md`、`docs/specifications/*.md` をもとにシステムを構築している。\n" +
                         "`docs/tickets`以下の[チケット](docs/tickets/TICKETS_LIST.md)のうち、" +
-                        `${finishedTicketNoList}` +
-                        "を完了している。" +
+                        `${finishedTicketNoList.join(', ')}` +
+                        "を完了している。\n" +
                         "次のチケットは[${ticketNo}](${ticketFilePath})である。" +
-                        "必要なファイルを読み込み、チケットの概要と注意点を教えて。\""
+                        "依頼事項: 必要なファイルを読み込み、チケットの概要と注意点を調査して。\""
                     }
                     ticketNo={ticketNo}
                     ticketFilePath={ticketFilePath}
@@ -92,17 +127,19 @@ export default function TaskPrompts() {
                 <Section
                     title="タスクの実装をAIが終了したら確認"
                     defaultPrompt={
-                        "/sc:analyze \"[${ticketNo}](${ticketFilePath})の実装が完了した。" +
-                        "ドキュメントに記載されていることに抜け漏れや矛盾点がないことと、lintやbuild、テストに問題がないか確認して。\""
+                        "/sc:analyze \"[${ticketNo}](${ticketFilePath})の実装が完了した。\n" +
+                        "依頼事項: ドキュメントに記載されていることに抜け漏れや矛盾点がないことと、lintやbuild、テストに問題がないか確認して。\""
                     }
                     ticketNo={ticketNo}
                     ticketFilePath={ticketFilePath}
                 />
 
                 <Section
-                    title="不具合があったら"
+                    title="不具合があったら（下記プロンプトは例）"
                     defaultPrompt={
-                        "/sc:improve \"次の内容をfixしてください。1. 重要度:中の2件、重要度:低の`process.exit()`とフォーマット  2. T103以外のNodeJS型未定義エラー\""
+                        "/sc:improve \"次の内容をfixしてください。" +
+                        "1. 重要度:中の2件、重要度:低の`process.exit()`とフォーマット\n" +
+                        "2. T103以外のNodeJS型未定義エラー\""
                     }
                     ticketNo={ticketNo}
                     ticketFilePath={ticketFilePath}
@@ -112,9 +149,10 @@ export default function TaskPrompts() {
                     title="終了時のドキュメント"
                     defaultPrompt={
                         "/sc:document \"${ticketNo}は終了とします。" +
-                        "[${ticketNo}](${ticketFilePath})にステータスがあるので、DONEに更新して。" +
-                        "ほかにも修正すべきドキュメント・修正すべき箇所を確認し、あったら修正して。" +
-                        "暫定的に行ったことやあとで修正すべき残タスクがあったら、ドキュメントに追記した上で教えてください。\""
+                        "下記を順に実行し、それぞれ報告してください。\n" +
+                        "1. ステータス更新: [${ticketNo}](${ticketFilePath})にステータスがあるので、DONEに更新して。\n" +
+                        "2. ドキュメント修正: ほかにも修正すべきドキュメント・修正すべき箇所を確認し、あったら修正して。\n" +
+                        "3. ドキュメント追記: 暫定的に対応したソースやあとで修正すべき残タスクがあったら、ドキュメントに追記してください。\""
                     }
                     ticketNo={ticketNo}
                     ticketFilePath={ticketFilePath}
@@ -124,7 +162,7 @@ export default function TaskPrompts() {
                     title="git"
                     defaultPrompt={
                         "/sc:git --smart-commit " +
-                        "\"[${ticketNo}](${ticketFilePath})が終了した。" +
+                        "\"[${ticketNo}](${ticketFilePath})が完全に終了しました。" +
                         "プロジェクトルートディレクトリに移動して、すべての更新ファイルをadd, commit, pushして。\""
                     }
                     ticketNo={ticketNo}

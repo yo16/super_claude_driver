@@ -1,0 +1,10 @@
+.ticketTableSetDiv {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.ticketTableSetStatusDiv {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}

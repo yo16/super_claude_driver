@@ -1,3 +1,9 @@
+.taskPromptsHeaderContents {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
 .taskPromptsInputDiv > label {
     display: inline-block;
     width: 120px;

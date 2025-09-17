@@ -24,8 +24,8 @@ export function Section(props: SectionProps) {
     // defaultPromptの中の${ticketNo}をticketNoに、${ticketFilePath}をticketFilePathに置き換える
     const createReplacedDefaultPrompt = () => {
         return defaultPrompt
-            .replace('${ticketNo}', ticketNo)
-            .replace('${ticketFilePath}', ticketFilePath);
+            .replaceAll('${ticketNo}', ticketNo)
+            .replaceAll('${ticketFilePath}', ticketFilePath);
     }
     useEffect(() => {
         setCurrentPrompt(
