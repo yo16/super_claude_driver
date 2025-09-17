@@ -1,0 +1,2 @@
+# super_claude_driver
+SuperClaudeを使ってシステム開発のタスクを進める際の、プロンプトジェネレーター
