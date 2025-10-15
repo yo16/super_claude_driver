@@ -1,0 +1,38 @@
+[
+    {
+        "title": "要件定義（下記プロンプトは例）",
+        "defaultPrompt": "/sc:brainstorm \"株価の予測システムを作ろうと考えている。\n証券コード、または企業名を検索して選択し、その株価をテクニカル分析をする。その後、その結果を踏まえて、AI(Open AI API)を使って3日後、1週間後、1か月後の株価を予測する。\n\n過去から現在の株価は、[J-Quants API](https://jpx-jquants.com/)を使用して、サーバーサイドで取得する。\n\n技術的には、クライアントはNode.js(Next.js, TypeScript)、サーバーサイドはNode.js(express)を使用する。DBは今のところ使用する予定はない。\n\n必要に応じて私に聞いて、要件定義を完了し、ドキュメント化して`docs`以下に保存してください。\""
+    },
+    {
+        "title": "計画を立てる",
+        "defaultPrompt": "/sc:workflow \"システムを構築する際に、なるべく小さくて独立したステップに分割したい。そのステップをすべて、チケットとして`docs/tickets`以下にファイルに作成してほしい。チケットファイルは、下記に注意して記述して。\n- コーディングや具体的な命名はなるべく記述せず、やることだけを書くこと（チケットファイルに設計を記述せず、ToDoの内容だけを正確に漏れなく書くこと）\n- 順序の依存関係も記入すること\n- 必要に応じて、他ファイルの参照をMarkdown形式で書くこと\n- すべてのチケットの概要をまとめた、`./docs/tickets/TICKETS_LIST.md`を作成し、進捗をそこで管理すること\""
+    },
+    {
+        "title": "チケット整列",
+        "defaultPrompt": "`docs/tickets`以下にチケットファイルがある。\n依頼事項: これらを、[チケットリスト](docs/tickets/TICKETS_LIST.md)の実装順序に従って、整列して。出力形式は、`チケット番号,チケットファイルパス`。\n例\nT001,docs/tickets/T001_initialize.md\nT002,docs/tickets/T002_process_a.md\nT003,docs/tickets/T003_process_b.md"
+    },
+    {
+        "title": "タスクを確認する",
+        "defaultPrompt": "/sc:analyze \"`CLAUDE.md`、`docs/specifications/*.md` をもとにシステムを構築している。\n`docs/tickets`以下の[チケット](docs/tickets/TICKETS_LIST.md)のうち、{finishedTicketNoList}を完了している。\n次のチケットは[{ticketNo}]({ticketFilePath})である。依頼事項: 必要なファイルを読み込み、チケットの概要と注意点を調査して。\""
+    },
+    {
+        "title": "タスクを実行する",
+        "defaultPrompt": "/sc:implement \"[{ticketNo}]({ticketFilePath})を実装して\""
+    },
+    {
+        "title": "タスクの実装をAIが終了したら確認",
+        "defaultPrompt": "/sc:analyze \"[{ticketNo}]({ticketFilePath})の実装が完了した。\n依頼事項: ドキュメントに記載されていることに抜け漏れや矛盾点がないことと、lintやbuild、テストに問題がないか確認して。\""
+    },
+    {
+        "title": "不具合があったら（下記プロンプトは例）",
+        "defaultPrompt": "/sc:improve \"次の内容をfixしてください。1. 重要度:中の2件、重要度:低の`process.exit()`とフォーマット\n2. T103以外のNodeJS型未定義エラー\""
+    },
+    {
+        "title": "終了時のドキュメント",
+        "defaultPrompt": "/sc:document \"{ticketNo}は終了とします。下記を順に実行し、それぞれ報告してください。\n1. ステータス更新: [{ticketNo}]({ticketFilePath})と[チケットリスト](docs/tickets/TICKETS_LIST.md)にステータスがあるので、DONEに更新して。\n2. ドキュメント修正: もし、ほかにも修正すべきドキュメント・修正すべき箇所を確認し、あったら修正して。\n3. ドキュメント追記: もし、暫定的に対応したソースやあとで修正すべき残タスクがあったら、新しいチケットを発行して[チケットリスト](docs/tickets/TICKETS_LIST.md)に追記・チケットファイルを作成してください。\""
+    },
+    {
+        "title": "git",
+        "defaultPrompt": "/sc:git --smart-commit \"[{ticketNo}]({ticketFilePath})が完全に終了しました。プロジェクトルートディレクトリに移動して、すべての更新ファイルをadd, commit, pushして。\""
+    }
+]
