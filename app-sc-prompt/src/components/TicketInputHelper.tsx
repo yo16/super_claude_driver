@@ -57,12 +57,12 @@ export function TicketInputHelper(ticketInputHelperProps: TicketInputHelperProps
             // 文字列から、チケット番号とファイルパスを生成する
             // 文字列の入力フォーマット
             // ```
-            // ● T001,docs/tickets/T001_project_setup.md
-            //   T002,docs/tickets/T002_server_dependencies.md
-            //   T003,docs/tickets/T003_client_dependencies.md
-            //   T004,docs/tickets/T004_eslint_prettier.md
+            // ● T001,docs/tickets/T001_project_setup.md,DONE
+            //   T002,docs/tickets/T002_server_dependencies.md,DONE
+            //   T003,docs/tickets/T003_client_dependencies.md,TODO
+            //   T004,docs/tickets/T004_eslint_prettier.md,TODO
             //   T101,docs/tickets/T101_express_server.md
-            //   T401,docs/tickets/T401_react_app.md
+            //   T401,docs/tickets/T401_react_app.md,DONE
             // ```
             // 先頭の"● "はない場合もある
             const tickets = textareaValue2.split('\n').map((line) => {
@@ -74,9 +74,13 @@ export function TicketInputHelper(ticketInputHelperProps: TicketInputHelperProps
                 if (line.startsWith(" ")) {
                     line = line.trim();
                 }
-                // カンマでsplitして、チケット番号とファイルパスを取得する
-                const [ticketNo, filePath] = line.split(',');
-                return { ticketNo, filePath, status: "TODO" };
+                // カンマでsplitして、チケット番号とファイルパスと進捗ステータスを取得する
+                const [ticketNo, filePath, status] = line.split(',');
+                // 空の場合はnullを返す
+                if (!ticketNo || !filePath || !status) {
+                    return null;
+                }
+                return { ticketNo, filePath, status: status || "TODO" };
             });
             // nullを除外する
             const filteredTickets = tickets.filter(ticket => ticket !== null);

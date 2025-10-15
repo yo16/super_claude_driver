@@ -9,7 +9,7 @@
     },
     {
         "title": "チケット整列",
-        "defaultPrompt": "`docs/tickets`以下にチケットファイルがある。\n依頼事項: これらを、[チケットリスト](docs/tickets/TICKETS_LIST.md)の実装順序に従って、整列して。出力形式は、`チケット番号,チケットファイルパス`。\n例\nT001,docs/tickets/T001_initialize.md\nT002,docs/tickets/T002_process_a.md\nT003,docs/tickets/T003_process_b.md"
+        "defaultPrompt": "`docs/tickets`以下にチケットファイルがある。\n依頼事項: これらを、[チケットリスト](docs/tickets/TICKETS_LIST.md)の実装順序に従って、整列して。[チケットリスト](docs/tickets/TICKETS_LIST.md)には、進捗ステータスも書かれている。\n出力形式は、`チケット番号,チケットファイルパス,進捗ステータス`。\n例\nT001,docs/tickets/T001_initialize.md,DONE\nT002,docs/tickets/T002_process_a.md,DONE\nT003,docs/tickets/T003_process_b.md,TODO"
     },
     {
         "title": "タスクを確認する",
